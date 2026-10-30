@@ -141,6 +141,7 @@ jobs:
         run: |
           MODULE_ID=$(grep '^id=' module.prop | cut -d= -f2)
           VER="${{ steps.ver.outputs.version }}"
+          COUNT=$(git rev-list --count HEAD)
 
           for pair in "arm64-v8a:aarch64-linux-android" "armeabi-v7a:armv7-linux-androideabi" "x86_64:x86_64-linux-android" "x86:i686-linux-android"; do
             abi="${pair%%:*}"
@@ -151,7 +152,7 @@ jobs:
           done
 
           mkdir -p release
-          ZIP_NAME="${MODULE_ID}-${VER}-debug.zip"
+          ZIP_NAME="${MODULE_ID}-${VER}-${COUNT}-debug.zip"
           zip -r9 "release/${ZIP_NAME}" . \
             -x ".git/*" \
             -x ".claude/*" \
@@ -203,17 +204,19 @@ jobs:
           mv release/*-debug.zip release/dbg/ 2>/dev/null || true
           mv release/*.zip release/rel/ 2>/dev/null || true
 
-      - uses: actions/upload-artifact@v4
+      # archive: false -> the downloaded artifact is the raw module ZIP
+      # (no GitHub wrapper), so it flashes directly in KernelSU/Magisk.
+      - uses: actions/upload-artifact@v7
         with:
-          name: ta-enhanced-release-zip
           path: release/rel/*.zip
           retention-days: 30
+          archive: false
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
-          name: ta-enhanced-debug-zip
           path: release/dbg/*.zip
           retention-days: 30
+          archive: false
 
   release:
     needs: [build, package]

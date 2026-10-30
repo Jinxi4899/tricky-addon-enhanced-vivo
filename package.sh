@@ -37,6 +37,11 @@ MODULE_ID=$(grep '^id=' "$PROP" | cut -d= -f2)
 OLD_VERSION=$(grep '^version=' "$PROP" | cut -d= -f2)
 OLD_CODE=$(grep '^versionCode=' "$PROP" | cut -d= -f2)
 
+# Commit count appended to artifact name so each build is distinguishable
+# (mirrors VIVO-KernelSU's version+commit convention). Falls back to 0
+# when run outside a git tree.
+COUNT=$(git -C "$REPO_DIR" rev-list --count HEAD 2>/dev/null || echo 0)
+
 if [ -z "$MODULE_ID" ] || [ -z "$OLD_VERSION" ] || [ -z "$OLD_CODE" ]; then
     echo "FATAL: Cannot parse module.prop" >&2
     exit 1
@@ -213,7 +218,8 @@ echo ""
 echo "=== Packaging ==="
 
 mkdir -p "$OUT_DIR"
-ZIP_NAME="${MODULE_ID}-${NEW_VERSION}.zip"
+# Artifact name: <id>-v<version>-<commitCount>.zip  (suffix carries commit count)
+ZIP_NAME="${MODULE_ID}-${NEW_VERSION}-${COUNT}.zip"
 ZIP_PATH="$OUT_DIR/$ZIP_NAME"
 
 if [ "$DO_CLEAN" = true ]; then
