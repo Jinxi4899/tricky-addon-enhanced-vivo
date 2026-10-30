@@ -1,19 +1,8 @@
 name: Build
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - 'rust/**'
-      - 'webui/**'
-      - 'common/**'
-      - '*.sh'
-      - 'module.prop'
-      - '.github/workflows/build.yml'
-  pull_request:
-    branches: [main]
-    paths:
-      - 'rust/**'
+  # Manual builds only: pushes to main do NOT auto-trigger (vivo fork policy).
+  # Run via Actions tab -> Build -> Run workflow when a zip is needed.
   workflow_dispatch:
 
 jobs:
