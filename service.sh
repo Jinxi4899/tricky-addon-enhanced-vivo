@@ -40,10 +40,11 @@ add_denylist_to_target() {
 # Security patch is handled by the daemon's SecurityPatchTask (with retries + bulletin fetch).
 # Running `set` here would overwrite bulletin-fetched dates with stale device props.
 
-# prop.sh runs with RP_BIN pointed at the bundled resetprop-rs to keep the
-# upstream calling pattern intact while sourcing the property setter from
-# the module bundle.
-RP_BIN="$MODPATH/bin/$ABI/resetprop-rs" sh "$MODPATH/prop.sh" &
+# prop.sh resolves the best available resetprop on its own (preferring the
+# root manager's native resetprop so it can override read-only bootloader_*
+# props such as ro.boot.vbmeta.device_state). We no longer force RP_BIN to the
+# bundled resetprop-rs, which cannot always override those read-only props.
+sh "$MODPATH/prop.sh" &
 
 
 # TSupport-A Interop
