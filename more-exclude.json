@@ -127,6 +127,14 @@
                     "package-name": "com.android.chrome"
                 },
                 {
+                    "name": "YouTube",
+                    "package-name": "com.google.android.youtube"
+                },
+                {
+                    "name": "YouTube Music",
+                    "package-name": "com.google.android.apps.youtube.music"
+                },
+                {
                     "name": "Speedtest",
                     "package-name": "org.zwanoo.android.speedtest"
                 }
